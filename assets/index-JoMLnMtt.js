@@ -10510,7 +10510,10 @@ function Kh() {
             E.stopPropagation(),
             Zl.current || (il(z => !z), F || g(!0))
         },
-        D = A ? -158 : 0;
+        D = A ? -158 : 0,
+        isMobile = typeof window != "undefined" && window.innerWidth <= 640,
+        wrapperScale = isMobile ? Math.min(W, 0.95) : W,
+        wrapperOffset = A && isMobile ? 30 : 0;
     return O.jsxs("div", {
         "data-testid": "birthday-card-scene",
         className: "w-full h-screen relative overflow-hidden",
@@ -10576,7 +10579,7 @@ function Kh() {
                     width: Ya,
                     height: Se,
                     transformStyle: "preserve-3d",
-                    transform: `rotateX(${X.x}deg) rotateY(${X.y}deg) scale(${W}) translateY(${al}px)`,
+                    transform: `translateX(${wrapperOffset}px) rotateX(${X.x}deg) rotateY(${X.y}deg) scale(${wrapperScale}) translateY(${al}px)`,
                     cursor: ml.current ? "grabbing" : "grab"
                 },
                 children: [O.jsxs("div", {
@@ -11135,7 +11138,7 @@ function Kh() {
                                     opacity: 0.9
                                 },
                                 children:
-                                    "tI hope your day feels calm and light.\n\nYou mean a lot more than you think.\n\n Im grateful for you.\n\nHappy Birthday"
+                                    "I hope your day feels calm and light.\n\nYou mean a lot more than you think.\n\n Im grateful for you.\n\nHappy Birthday"
                                 })
                             ]
                             }),
