@@ -4258,13 +4258,13 @@ Error generating stack: `
                     var a = Bt,
                         u = Nt;
                     a = (u & ~(1 << 32 - Pl(u) - 1)).toString(32) + a,
-                    t = "«" + t + "R" + a,
+                    t = "Â«" + t + "R" + a,
                     a = $e++,
                     0 < a && (t += "H" + a.toString(32)),
-                    t += "»"
+                    t += "Â»"
                 } else
                     a = Td++,
-                    t = "«" + t + "r" + a.toString(32) + "»";
+                    t = "Â«" + t + "r" + a.toString(32) + "Â»";
                 return l.memoizedState = t
             },
             useHostTransitionStatus: $i,
@@ -10416,6 +10416,7 @@ function Kh() {
         }),
         gt = Al.useRef(0),
         $l = Al.useRef(null),
+        pinchRef = Al.useRef({ distance: 0, scale: 1 }),
         zl = Al.useMemo(() => Lh(70), []),
         Nl = "Happy",
         V = "Birthday!",
@@ -10478,13 +10479,27 @@ function Kh() {
             jl(E.clientX, E.clientY)
         },
         Ol = E => {
-            const z = E.touches[0];
-            jl(z.clientX, z.clientY)
+            if (E.touches.length === 2) {
+                const t1 = E.touches[0], t2 = E.touches[1];
+                pinchRef.current.distance = Math.sqrt((t1.clientX - t2.clientX)**2 + (t1.clientY - t2.clientY)**2);
+                pinchRef.current.scale = W;
+            } else if (E.touches.length === 1) {
+                const z = E.touches[0];
+                jl(z.clientX, z.clientY);
+            }
         },
         Mt = E => {
-            E.preventDefault();
-            const z = E.touches[0];
-            Ll(z.clientX, z.clientY)
+            if (E.touches.length === 2) {
+                E.preventDefault();
+                const t1 = E.touches[0], t2 = E.touches[1];
+                const newDist = Math.sqrt((t1.clientX - t2.clientX)**2 + (t1.clientY - t2.clientY)**2);
+                const newScale = pinchRef.current.scale * (newDist / pinchRef.current.distance);
+                sl(Math.max(0.4, Math.min(2.2, newScale)));
+            } else if (E.touches.length === 1) {
+                E.preventDefault();
+                const z = E.touches[0];
+                Ll(z.clientX, z.clientY);
+            }
         },
         _t = () => xt(),
         Dl = E => {
@@ -10568,7 +10583,6 @@ function Kh() {
                         position: "absolute",
                         width: Ya,
                         height: Se,
-                        transform: `translateZ(${-ga / 2}px)`,
                         background: "linear-gradient(145deg, #FFFAF6 0%, #FFF8F2 50%, #FFF3EC 100%)",
                         borderRadius: "3px 10px 10px 3px",
                         backfaceVisibility: "hidden",
@@ -10789,7 +10803,7 @@ function Kh() {
                                             transition: "transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease",
                                             textShadow: "0 1px 5px rgba(200,35,107,0.25)"
                                         },
-                                        children: E === " " ? " " : E
+                                        children: E === " " ? "Â " : E
                                     }, z)
                                 })
                             }), O.jsx("div", {
@@ -10884,7 +10898,7 @@ function Kh() {
                             fontFamily: "Georgia, serif",
                             fontStyle: "italic"
                         },
-                        children: "with love ♥"
+                        children: "with love â™¥"
                     })]
                 }), O.jsx("div", {
                     style: {
@@ -10894,7 +10908,7 @@ function Kh() {
                         width: Ya,
                         height: 0,
                         transformStyle: "preserve-3d",
-                        transform: `translateZ(${-ga / 2 + 3}px)`,
+                        backfaceVisibility: "hidden",
                         pointerEvents: "none"
                     },
                     children: Zh.map((E, z) => O.jsx(Vh, {
@@ -11074,6 +11088,7 @@ function Kh() {
                             background: "linear-gradient(150deg, #FFFAF6 0%, #FFF5EE 100%)",
                             borderRadius: "3px 10px 10px 3px",
                             backfaceVisibility: "hidden",
+                            visibility: A ? 'visible' : 'hidden',
                             transform: `rotateY(180deg) translateZ(${ga / 2}px)`,
                             overflow: "hidden"
                         },
@@ -11100,23 +11115,30 @@ function Kh() {
                                 color: "#C9A090",
                                 fontFamily: "system-ui, sans-serif"
                             },
-                            children: "test"
-                        }), O.jsx("div", {
-                            style: {
-                                position: "absolute",
-                                top: "44px",
-                                left: "14px",
-                                right: "14px"
-                            },
-                            children: Array.from({
-                                length: 9
-                            }, (E, z) => O.jsx("div", {
+                            children: [
+                                O.jsx("div", {
                                 style: {
-                                    borderBottom: "1px solid rgba(200,155,135,0.22)",
-                                    height: "24px"
-                                }
-                            }, z))
-                        }), O.jsx("div", {
+                                    fontSize: "20px",
+                                    fontWeight: "600",
+                                    marginBottom: "12px",
+                                    letterSpacing: "0.5px"
+                                },
+                                children: "Hi Ana"
+                                }),
+
+                                O.jsx("div", {
+                                style: {
+                                    fontSize: "12px",
+                                    lineHeight: "22px",
+                                    whiteSpace: "pre-line",
+                                    opacity: 0.9
+                                },
+                                children:
+                                    "I hope your day feels calm and light.\n\nYou mean a lot more than you think.\n\nIâ€™m grateful for you.\n\nHappy Birthday ðŸ’›"
+                                })
+                            ]
+                            }),
+                             O.jsx("div", {
                             style: {
                                 position: "absolute",
                                 bottom: "18px",
@@ -11126,7 +11148,7 @@ function Kh() {
                                 color: "rgba(210,100,130,0.28)",
                                 textAlign: "center"
                             },
-                            children: "♥"
+                            children: "â™¥"
                         })]
                     })]
                 }), O.jsx("div", {
@@ -11194,7 +11216,7 @@ function Kh() {
                     border: "1px solid rgba(255,255,255,0.7)",
                     boxShadow: "0 2px 20px rgba(180,90,60,0.1)"
                 },
-                children: "Click the card to open • Drag to rotate • Scroll to zoom"
+                children: "Click the card to open â€¢ Drag to rotate â€¢ Scroll to zoom"
             })
         })]
     })
