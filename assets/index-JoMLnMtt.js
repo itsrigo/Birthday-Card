@@ -10249,7 +10249,7 @@ function Vh({f: A, isOpen: il}) {
         style: {
             position: "absolute",
             left: "50%",
-            bottom: 0,
+            bottom: 25,
             width: 0,
             height: 0,
             transformStyle: "preserve-3d",
@@ -10263,7 +10263,7 @@ function Vh({f: A, isOpen: il}) {
             style: {
                 position: "absolute",
                 left: "-4px",
-                bottom: 0,
+                bottom: "20px",
                 width: "8px",
                 height: `${A.stemH}px`,
                 background: "linear-gradient(to right, #2E7D32 0%, #66BB6A 50%, #2E7D32 100%)",
@@ -10512,9 +10512,9 @@ function Kh() {
         },
         D = A ? -158 : 0,
         isMobile = typeof window != "undefined" && window.innerWidth <= 640,
-        maxMobileScale = isMobile ? (A ? 0.85 : 0.95) : W,
+        maxMobileScale = isMobile ? (A ? 0.78 : 0.95) : W,
         wrapperScale = isMobile ? Math.min(W, maxMobileScale) : W,
-        wrapperOffset = A && isMobile ? -20 : 0;
+        wrapperOffset = A && isMobile ? 40 : 0;
     return O.jsxs("div", {
         "data-testid": "birthday-card-scene",
         className: "w-full h-screen relative overflow-hidden",
