@@ -10461,18 +10461,6 @@ function Kh() {
             canceled = !0;
         };
     }, []),
-                        })));
-                    }
-                }
-            } catch (error) {
-                // ignore failures
-            }
-        };
-        loadImages();
-        return () => {
-            canceled = !0;
-        };
-    }, []),
     Al.useEffect(() => {
         A ? (T(Array(xl.length).fill(!1)), P(!1), xl.split("").forEach((E, z) => {
             setTimeout(() => {
