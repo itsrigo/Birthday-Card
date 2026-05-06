@@ -10512,8 +10512,9 @@ function Kh() {
         },
         D = A ? -158 : 0,
         isMobile = typeof window != "undefined" && window.innerWidth <= 640,
-        wrapperScale = isMobile ? Math.min(W, 0.95) : W,
-        wrapperOffset = A && isMobile ? 30 : 0;
+        maxMobileScale = isMobile ? (A ? 0.85 : 0.95) : W,
+        wrapperScale = isMobile ? Math.min(W, maxMobileScale) : W,
+        wrapperOffset = A && isMobile ? -20 : 0;
     return O.jsxs("div", {
         "data-testid": "birthday-card-scene",
         className: "w-full h-screen relative overflow-hidden",
