@@ -10,42 +10,112 @@ const PETAL_COLORS = [
   '#C9A0DC', '#87CEEB', '#FFDAB9', '#B5EAD7'
 ];
 
-// Flower configurations
+// Enhanced flower configurations with pop-up mechanics
 const FLOWERS = [
   {
-    x: 0, zOff: 60, stemH: 88, petalCount: 6, outerColor: '#D4145A',
-    innerColor: '#FF85A1', centerColor: '#FFD700', petalW: 22, petalH: 40,
-    delay: 0.05, scale: 1.15
+    id: 'main-flower',
+    x: 0,
+    y: 0,
+    z: 60,
+    stemH: 95,
+    stemRadius: 4,
+    petalCount: 8,
+    outerColor: '#D4145A',
+    innerColor: '#FF85A1',
+    centerColor: '#FFD700',
+    petalW: 26,
+    petalH: 48,
+    petalThickness: 8,
+    delay: 0.05,
+    scale: 1.2,
+    foldLayers: 3,
+    leafCount: 4,
+    bloomHeight: 20,
+    unfoldDuration: 1.2
   },
   {
-    x: -50, zOff: 38, stemH: 68, petalCount: 6, outerColor: '#AA1465',
-    innerColor: '#E8638F', centerColor: '#FFA500', petalW: 18, petalH: 34,
-    delay: 0.18, scale: 0.95
+    id: 'side-flower-left',
+    x: -65,
+    y: 25,
+    z: 38,
+    stemH: 72,
+    stemRadius: 3.5,
+    petalCount: 7,
+    outerColor: '#AA1465',
+    innerColor: '#E8638F',
+    centerColor: '#FFA500',
+    petalW: 22,
+    petalH: 40,
+    petalThickness: 6,
+    delay: 0.25,
+    scale: 0.9,
+    foldLayers: 2,
+    leafCount: 3,
+    bloomHeight: 18,
+    unfoldDuration: 1.1
   },
   {
-    x: 50, zOff: 42, stemH: 74, petalCount: 7, outerColor: '#7B1FA2',
-    innerColor: '#CE93D8', centerColor: '#FFE066', petalW: 18, petalH: 34,
-    delay: 0.13, scale: 0.98
+    id: 'side-flower-right',
+    x: 65,
+    y: 25,
+    z: 42,
+    stemH: 78,
+    stemRadius: 3.5,
+    petalCount: 7,
+    outerColor: '#7B1FA2',
+    innerColor: '#CE93D8',
+    centerColor: '#FFE066',
+    petalW: 22,
+    petalH: 40,
+    petalThickness: 6,
+    delay: 0.2,
+    scale: 0.95,
+    foldLayers: 2,
+    leafCount: 3,
+    bloomHeight: 18,
+    unfoldDuration: 1.1
   },
   {
-    x: -26, zOff: 52, stemH: 80, petalCount: 5, outerColor: '#C62828',
-    innerColor: '#EF9A9A', centerColor: '#FFD700', petalW: 20, petalH: 38,
-    delay: 0.22, scale: 1.05
+    id: 'back-flower-left',
+    x: -45,
+    y: -15,
+    z: 22,
+    stemH: 60,
+    stemRadius: 3,
+    petalCount: 6,
+    outerColor: '#C62828',
+    innerColor: '#EF9A9A',
+    centerColor: '#FFD700',
+    petalW: 19,
+    petalH: 35,
+    petalThickness: 5,
+    delay: 0.35,
+    scale: 0.85,
+    foldLayers: 2,
+    leafCount: 2,
+    bloomHeight: 15,
+    unfoldDuration: 1.0
   },
   {
-    x: 28, zOff: 48, stemH: 76, petalCount: 8, outerColor: '#E65100',
-    innerColor: '#FFCC80', centerColor: '#5D4037', petalW: 16, petalH: 30,
-    delay: 0.16, scale: 1
-  },
-  {
-    x: -78, zOff: 22, stemH: 54, petalCount: 6, outerColor: '#AD1457',
-    innerColor: '#F48FB1', centerColor: '#FFA000', petalW: 15, petalH: 28,
-    delay: 0.3, scale: 0.82
-  },
-  {
-    x: 78, zOff: 26, stemH: 58, petalCount: 5, outerColor: '#BF360C',
-    innerColor: '#FFAB91', centerColor: '#FFD700', petalW: 16, petalH: 30,
-    delay: 0.27, scale: 0.88
+    id: 'back-flower-right',
+    x: 45,
+    y: -15,
+    z: 28,
+    stemH: 65,
+    stemRadius: 3,
+    petalCount: 6,
+    outerColor: '#E65100',
+    innerColor: '#FFCC80',
+    centerColor: '#5D4037',
+    petalW: 19,
+    petalH: 35,
+    petalThickness: 5,
+    delay: 0.3,
+    scale: 0.88,
+    foldLayers: 2,
+    leafCount: 2,
+    bloomHeight: 15,
+    unfoldDuration: 1.0
   }
 ];
 
@@ -65,11 +135,182 @@ function generateConfetti(count) {
   }));
 }
 
-// Flower component
-function Flower({ flower, isOpen }) {
-  const stemBottom = -(flower.stemH + 52);
-  const openTransform = `translateX(${flower.x}px) translateZ(${flower.zOff}px) scale(${flower.scale})`;
-  const closedTransform = `translateX(${flower.x}px) translateZ(2px) scale(0)`;
+// Enhanced 3D Petal Component
+function Petal3D({ index, flower, petalAngle, isUnfolding, unfoldProgress }) {
+  const petalRotation = (index / flower.petalCount) * 360;
+  
+  // Folding animation - petals fold out as card opens
+  const foldProgress = unfoldProgress;
+  const petalFold = isUnfolding ? foldProgress * 85 : 0; // Fold angle in degrees
+  const petalLift = isUnfolding ? foldProgress * 15 : 0; // Vertical lift
+  
+  // 3D depth for petal
+  const petalDepth = flower.petalThickness;
+  
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        width: `${flower.petalW}px`,
+        height: `${flower.petalH}px`,
+        marginLeft: `-${flower.petalW / 2}px`,
+        marginTop: `-${flower.petalH}px`,
+        transformOrigin: '50% 100%',
+        transform: `rotateZ(${petalRotation}deg) translateY(${-petalLift}px) rotateX(${-petalFold}deg)`,
+        transformStyle: 'preserve-3d',
+        perspective: '1200px'
+      }}
+    >
+      {/* Front face of petal */}
+      <div
+        style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          borderRadius: '52% 52% 36% 36%',
+          background: `linear-gradient(to bottom, ${flower.innerColor} 0%, ${flower.outerColor} 65%, #FFB3C6 100%)`,
+          boxShadow: `
+            0 8px 16px rgba(0,0,0,0.25),
+            inset 0 -8px 12px rgba(0,0,0,0.15),
+            inset 1px 2px 6px rgba(255,255,255,0.4),
+            0 0 20px rgba(255,150,170,0.2)
+          `,
+          filter: 'drop-shadow(2px 4px 8px rgba(0,0,0,0.2))',
+          transformStyle: 'preserve-3d',
+          backfaceVisibility: 'hidden'
+        }}
+      />
+      
+      {/* Side/depth face of petal */}
+      <div
+        style={{
+          position: 'absolute',
+          width: '100%',
+          height: `${petalDepth}px`,
+          bottom: 0,
+          left: 0,
+          background: `linear-gradient(to right, ${flower.outerColor}dd 0%, ${flower.innerColor}aa 100%)`,
+          borderRadius: '0 0 8px 8px',
+          transformStyle: 'preserve-3d',
+          transform: `rotateX(90deg)`,
+          transformOrigin: 'bottom center',
+          boxShadow: 'inset 0 -2px 4px rgba(0,0,0,0.3)'
+        }}
+      />
+
+      {/* Back face (slightly darker) */}
+      <div
+        style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          borderRadius: '52% 52% 36% 36%',
+          background: `linear-gradient(to bottom, ${flower.outerColor}cc 0%, #B8536A 100%)`,
+          transform: `translateZ(-${petalDepth}px)`,
+          transformStyle: 'preserve-3d',
+          backfaceVisibility: 'hidden'
+        }}
+      />
+    </div>
+  );
+}
+
+// Enhanced 3D Stem Component
+function Stem3D({ flower, isUnfolding, unfoldProgress }) {
+  const stemRise = isUnfolding ? unfoldProgress * flower.bloomHeight : 0;
+  
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        left: `${flower.x}px`,
+        bottom: 0,
+        width: `${flower.stemRadius * 2}px`,
+        height: `${flower.stemH}px`,
+        marginLeft: `-${flower.stemRadius}px`,
+        transformStyle: 'preserve-3d',
+        transform: `translateY(${-stemRise}px)`,
+        transition: isUnfolding ? `transform ${flower.unfoldDuration}s cubic-bezier(0.34, 1.56, 0.64, 1) ${flower.delay}s` : 'transform 0.6s ease-out'
+      }}
+    >
+      {/* Main stem cylinder */}
+      <div
+        style={{
+          position: 'absolute',
+          width: '100%',
+          height: '100%',
+          background: `linear-gradient(to right, #2D6A3A 0%, #4CAF50 40%, #2D6A3A 100%)`,
+          borderRadius: `${flower.stemRadius}px`,
+          boxShadow: `
+            2px 2px 8px rgba(0,0,0,0.3),
+            inset -1px 0 4px rgba(0,0,0,0.2),
+            inset 1px 0 3px rgba(255,255,255,0.15)
+          `,
+          transformStyle: 'preserve-3d'
+        }}
+      />
+
+      {/* Left side of stem */}
+      <div
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          bottom: 0,
+          width: `${flower.stemRadius}px`,
+          background: `linear-gradient(to right, #1B4620 0%, #2D6A3A 100%)`,
+          borderRadius: `${flower.stemRadius}px 0 0 ${flower.stemRadius}px`,
+          boxShadow: 'inset 1px 0 3px rgba(255,255,255,0.1)'
+        }}
+      />
+
+      {/* Leaves */}
+      {Array.from({ length: flower.leafCount }).map((_, i) => {
+        const leafOffset = (i / flower.leafCount) * flower.stemH * 0.8;
+        const leafSide = i % 2 === 0 ? 'left' : 'right';
+        const leafRotation = leafSide === 'left' ? -35 : 35;
+        
+        return (
+          <div
+            key={`leaf-${i}`}
+            style={{
+              position: 'absolute',
+              bottom: `${leafOffset}px`,
+              [leafSide]: `${leafSide === 'left' ? -14 : -14}px`,
+              width: '22px',
+              height: '14px',
+              background: `linear-gradient(135deg, #4CAF50 0%, #2E7D32 70%, #1B4620 100%)`,
+              borderRadius: '50% 50% 50% 0',
+              transform: `rotate(${leafRotation}deg) translateZ(5px)`,
+              transformStyle: 'preserve-3d',
+              boxShadow: `
+                2px 1px 4px rgba(0,0,0,0.2),
+                inset -1px -1px 2px rgba(0,0,0,0.2),
+                inset 1px 1px 2px rgba(255,255,255,0.1)
+              `,
+              opacity: 0.85,
+              animation: isUnfolding ? `leafUnfold ${flower.unfoldDuration * 0.8}s ease-out ${flower.delay + 0.1}s forwards` : 'none',
+              transformOrigin: leafSide === 'left' ? 'right center' : 'left center'
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
+
+// Enhanced 3D Flower Component
+function Flower3D({ flower, isOpen }) {
+  const unfoldProgress = isOpen ? 1 : 0;
+  const baseZ = flower.z;
+  const bloomZ = isOpen ? baseZ + 20 : baseZ;
+  
+  // Container rises and scales as card opens
+  const containerTransform = isOpen
+    ? `translateX(${flower.x}px) translateZ(${bloomZ}px) scale(${flower.scale})`
+    : `translateX(${flower.x}px) translateZ(2px) scale(${flower.scale * 0.8})`;
 
   return (
     <div
@@ -80,96 +321,114 @@ function Flower({ flower, isOpen }) {
         width: 0,
         height: 0,
         transformStyle: 'preserve-3d',
-        transform: isOpen ? openTransform : closedTransform,
-        transformOrigin: 'center bottom',
-        opacity: isOpen ? 1 : 0,
-        transition: isOpen
-          ? `transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) ${flower.delay}s, opacity 0.1s ease ${flower.delay}s`
-          : 'transform 0.5s ease 0s, opacity 0.08s ease 0s',
+        transform: containerTransform,
+        transformOrigin: `${-flower.x}px bottom`,
+        opacity: isOpen ? 1 : 0.3,
+        transition: `
+          transform ${flower.unfoldDuration + 0.4}s cubic-bezier(0.34, 1.56, 0.64, 1) ${flower.delay}s,
+          opacity 0.3s ease ${flower.delay}s
+        `,
         willChange: 'transform, opacity'
       }}
     >
-      {/* Stem */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '-4px',
-          bottom: 0,
-          width: '8px',
-          height: `${flower.stemH}px`,
-          background: 'linear-gradient(to right, #2E7D32 0%, #66BB6A 50%, #2E7D32 100%)',
-          borderRadius: '4px',
-          boxShadow: '3px 0 10px rgba(20,60,20,0.45), -1px 0 4px rgba(0,0,0,0.2), inset 1px 0 3px rgba(255,255,255,0.15)'
-        }}
-      />
+      {/* Stem with 3D depth */}
+      <Stem3D flower={flower} isUnfolding={isOpen} unfoldProgress={unfoldProgress} />
 
-      {/* Leaves */}
+      {/* Flower bloom container */}
       <div
         style={{
           position: 'absolute',
-          left: '-18px',
-          bottom: `${flower.stemH * 0.42}px`,
-          width: '22px',
-          height: '12px',
-          background: 'linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%)',
-          borderRadius: '50% 0 50% 50%',
-          transform: 'rotateZ(-38deg)',
-          boxShadow: '2px 3px 7px rgba(20,60,20,0.35)'
-        }}
-      />
-      <div
-        style={{
-          position: 'absolute',
-          left: '4px',
-          bottom: `${flower.stemH * 0.26}px`,
-          width: '22px',
-          height: '12px',
-          background: 'linear-gradient(225deg, #4CAF50 0%, #2E7D32 100%)',
-          borderRadius: '0 50% 50% 50%',
-          transform: 'rotateZ(38deg)',
-          boxShadow: '-2px 3px 7px rgba(20,60,20,0.35)'
-        }}
-      />
-
-      {/* Flower bloom */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '-50px',
-          top: `${stemBottom}px`,
-          width: '100px',
-          height: '100px',
-          transform: 'rotateX(-45deg)',
-          backfaceVisibility: 'hidden'
+          left: `${-flower.x}px`,
+          bottom: `${flower.stemH}px`,
+          width: '120px',
+          height: '120px',
+          marginLeft: '-60px',
+          marginBottom: '-60px',
+          transformStyle: 'preserve-3d',
+          perspective: '1200px'
         }}
       >
         {/* Petals */}
-        {Array.from({ length: flower.petalCount }).map((_, i) => {
-          const angle = (i / flower.petalCount) * 360;
-          return (
-            <div
-              key={`outer-petal-${i}`}
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                marginLeft: `-${flower.petalW / 2}px`,
-                marginTop: `-${flower.petalH}px`,
-                width: `${flower.petalW}px`,
-                height: `${flower.petalH}px`,
-                transformOrigin: '50% 100%',
-                transform: `rotateZ(${angle}deg)`,
-                borderRadius: '52% 52% 36% 36%',
-                background: `linear-gradient(to top, ${flower.outerColor} 0%, ${flower.innerColor} 55%, #FFE0EC 100%)`,
-                boxShadow: '0 5px 12px rgba(0,0,0,0.22), inset 0 -6px 10px rgba(0,0,0,0.12), inset 1px 1px 4px rgba(255,255,255,0.3)'
-              }}
-            />
-          );
-        })}
+        {Array.from({ length: flower.petalCount }).map((_, i) => (
+          <Petal3D
+            key={`petal-${i}`}
+            index={i}
+            flower={flower}
+            petalAngle={(i / flower.petalCount) * 360}
+            isUnfolding={isOpen}
+            unfoldProgress={unfoldProgress}
+          />
+        ))}
 
-        {/* Inner petals */}
+        {/* Flower center with 3D depth */}
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            width: '32px',
+            height: '32px',
+            marginLeft: '-16px',
+            marginTop: '-16px',
+            borderRadius: '50%',
+            transformStyle: 'preserve-3d',
+            perspective: '1000px',
+            transform: isOpen ? 'scale(1) translateZ(8px)' : 'scale(0.7) translateZ(2px)',
+            transition: `transform ${flower.unfoldDuration}s ease-out ${flower.delay}s`,
+            background: `radial-gradient(circle at 35% 28%, #ffffffEE 0%, ${flower.centerColor}FF 35%, ${flower.centerColor}CC 100%)`,
+            boxShadow: `
+              0 0 16px ${flower.centerColor}DD,
+              0 8px 20px rgba(0,0,0,0.35),
+              inset 0 -4px 8px rgba(0,0,0,0.2),
+              inset 1px 2px 6px rgba(255,255,255,0.5)
+            `,
+            zIndex: 20
+          }}
+        >
+          {/* Center shine/highlight */}
+          <div
+            style={{
+              position: 'absolute',
+              width: '60%',
+              height: '60%',
+              top: '15%',
+              left: '15%',
+              borderRadius: '50%',
+              background: 'radial-gradient(circle, rgba(255,255,255,0.8) 0%, transparent 70%)',
+              filter: 'blur(1px)'
+            }}
+          />
+
+          {/* Stamen details */}
+          {Array.from({ length: 8 }).map((_, i) => {
+            const angle = (i / 8) * Math.PI * 2;
+            const radius = 10;
+            return (
+              <div
+                key={`stamen-${i}`}
+                style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  width: '3px',
+                  height: '6px',
+                  marginLeft: '-1.5px',
+                  marginTop: '-3px',
+                  borderRadius: '50%',
+                  background: `radial-gradient(circle, #FFE066 0%, #D4A000 100%)`,
+                  transform: `translate(${Math.cos(angle) * radius}px, ${Math.sin(angle) * radius}px)`,
+                  boxShadow: '0 2px 4px rgba(0,0,0,0.2)',
+                  opacity: 0.9
+                }}
+              />
+            );
+          })}
+        </div>
+
+        {/* Inner petal layer for depth */}
         {Array.from({ length: flower.petalCount }).map((_, i) => {
           const angle = (i / flower.petalCount) * 360 + 180 / flower.petalCount;
+          const unfoldAngle = isOpen ? angle : angle + 20;
           return (
             <div
               key={`inner-petal-${i}`}
@@ -177,60 +436,43 @@ function Flower({ flower, isOpen }) {
                 position: 'absolute',
                 top: '50%',
                 left: '50%',
-                marginLeft: `-${flower.petalW * 0.35}px`,
-                marginTop: `-${flower.petalH * 0.68}px`,
-                width: `${flower.petalW * 0.7}px`,
-                height: `${flower.petalH * 0.68}px`,
+                width: `${flower.petalW * 0.65}px`,
+                height: `${flower.petalH * 0.65}px`,
+                marginLeft: `-${(flower.petalW * 0.65) / 2}px`,
+                marginTop: `-${flower.petalH * 0.65}px`,
                 transformOrigin: '50% 100%',
-                transform: `rotateZ(${angle}deg)`,
+                transform: `rotateZ(${angle}deg) translateY(${isOpen ? 0 : 8}px) rotateX(${isOpen ? -60 : -20}deg)`,
                 borderRadius: '52% 52% 36% 36%',
-                background: `linear-gradient(to top, ${flower.innerColor} 0%, #FFD6E8 100%)`,
-                opacity: 0.9
-              }}
-            />
-          );
-        })}
-
-        {/* Flower center */}
-        <div
-          style={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            width: '28px',
-            height: '28px',
-            marginLeft: '-14px',
-            marginTop: '-14px',
-            borderRadius: '50%',
-            background: `radial-gradient(circle at 35% 28%, #ffffffCC 0%, ${flower.centerColor}EE 40%, ${flower.centerColor}88 100%)`,
-            boxShadow: `0 0 14px ${flower.centerColor}BB, 0 6px 18px rgba(0,0,0,0.28), inset 0 -3px 5px rgba(0,0,0,0.18)`,
-            zIndex: 10
-          }}
-        />
-
-        {/* Pollen */}
-        {Array.from({ length: 6 }).map((_, i) => {
-          const angle = (i / 6) * Math.PI * 2;
-          return (
-            <div
-              key={`pollen-${i}`}
-              style={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                width: '4px',
-                height: '4px',
-                borderRadius: '50%',
-                background: flower.outerColor,
-                marginLeft: '-2px',
-                marginTop: '-2px',
-                transform: `translate(${Math.cos(angle) * 10}px, ${Math.sin(angle) * 10}px)`,
-                opacity: 0.7
+                background: `linear-gradient(to bottom, ${flower.innerColor} 0%, #FFD6E8 100%)`,
+                opacity: isOpen ? 0.85 : 0.4,
+                transformStyle: 'preserve-3d',
+                boxShadow: `
+                  0 4px 10px rgba(0,0,0,0.15),
+                  inset 0 -4px 6px rgba(0,0,0,0.1)
+                `,
+                transition: `opacity ${flower.unfoldDuration}s ease-out ${flower.delay}s, transform ${flower.unfoldDuration}s cubic-bezier(0.34, 1.56, 0.64, 1) ${flower.delay}s`
               }}
             />
           );
         })}
       </div>
+
+      {/* Bottom shadow cast on card for depth perception */}
+      <div
+        style={{
+          position: 'absolute',
+          left: `${-flower.x}px`,
+          bottom: `${flower.stemH - 5}px`,
+          width: '70px',
+          height: '15px',
+          marginLeft: '-35px',
+          borderRadius: '50%',
+          background: `radial-gradient(ellipse, rgba(0,0,0,0.25) 0%, transparent 80%)`,
+          filter: 'blur(3px)',
+          opacity: isOpen ? 1 : 0.2,
+          transition: `opacity ${flower.unfoldDuration}s ease-out ${flower.delay}s`
+        }}
+      />
     </div>
   );
 }
@@ -282,10 +524,10 @@ function BirthdayCard() {
             newReveal[index] = true;
             return newReveal;
           });
-        }, 650 + index * 80);
+        }, 1200 + index * 80);
       });
 
-      setTimeout(() => setShowConfetti(true), 650 + fullText.length * 80 + 300);
+      setTimeout(() => setShowConfetti(true), 1200 + fullText.length * 80 + 300);
     } else {
       setTextReveal([]);
       setShowConfetti(false);
@@ -322,11 +564,14 @@ function BirthdayCard() {
   }, []);
 
   useEffect(() => {
-    window.addEventListener('mousemove', (e) => handleMouseMove(e));
-    window.addEventListener('mouseup', handleMouseUp);
+    const moveHandler = (e) => handleMouseMove(e);
+    const upHandler = () => handleMouseUp();
+    
+    window.addEventListener('mousemove', moveHandler);
+    window.addEventListener('mouseup', upHandler);
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
+      window.removeEventListener('mousemove', moveHandler);
+      window.removeEventListener('mouseup', upHandler);
     };
   }, [handleMouseMove, handleMouseUp]);
 
@@ -374,6 +619,31 @@ function BirthdayCard() {
       onTouchEnd={handleMouseUp}
       onWheel={handleWheel}
     >
+      <style>{`
+        @keyframes confettiFall {
+          to {
+            transform: translateY(100vh) translateX(var(--drift, 0px)) rotate(720deg);
+            opacity: 0;
+          }
+        }
+        
+        @keyframes leafUnfold {
+          from {
+            opacity: 0;
+            transform: rotateZ(var(--rotation, 0deg)) translateY(10px) rotateX(0deg);
+          }
+          to {
+            opacity: 0.85;
+            transform: rotateZ(var(--rotation, 0deg)) translateY(0px) rotateX(-45deg);
+          }
+        }
+
+        @keyframes hintPulse {
+          0%, 100% { opacity: 0.6; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.05); }
+        }
+      `}</style>
+
       {/* Background decorations */}
       <div className="absolute inset-0 pointer-events-none">
         <div
@@ -415,7 +685,7 @@ function BirthdayCard() {
                 borderRadius: piece.isCircle ? '50%' : '2px',
                 background: piece.color,
                 transform: `rotate(${piece.rotation}deg)`,
-                animation: `confettiFall ${piece.animDuration}s ${piece.animDelay}s ease-in infinite`,
+                animation: `confettiFall ${piece.animDuration}s ${piece.animDelay}s ease-in forwards`,
                 opacity: 0.9
               }}
             />
@@ -454,6 +724,19 @@ function BirthdayCard() {
               overflow: 'hidden'
             }}
           >
+            {/* Card interior shadows for depth */}
+            <div
+              style={{
+                position: 'absolute',
+                inset: 0,
+                background: `
+                  radial-gradient(ellipse at 50% 30%, transparent 0%, rgba(0,0,0,0.05) 50%, transparent 100%),
+                  radial-gradient(ellipse at 20% 80%, transparent 0%, rgba(0,0,0,0.08) 70%, transparent 100%)
+                `,
+                pointerEvents: 'none'
+              }}
+            />
+
             {/* Decorative circles */}
             <div
               style={{
@@ -479,122 +762,14 @@ function BirthdayCard() {
                 pointerEvents: 'none'
               }}
             />
-            <div
-              style={{
-                position: 'absolute',
-                top: '40%',
-                right: '-30px',
-                width: '100px',
-                height: '100px',
-                borderRadius: '50%',
-                background: 'radial-gradient(circle, rgba(200,160,220,0.12) 0%, transparent 70%)',
-                pointerEvents: 'none'
-              }}
-            />
-
-            {/* Decorative flower in corner */}
-            <div
-              style={{
-                position: 'absolute',
-                top: '10px',
-                right: '10px',
-                width: '28px',
-                height: '28px',
-                opacity: 0.25,
-                pointerEvents: 'none'
-              }}
-            >
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div
-                  key={i}
-                  style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    width: '7px',
-                    height: '14px',
-                    marginLeft: '-3.5px',
-                    marginTop: '-12px',
-                    borderRadius: '50% 50% 40% 40%',
-                    background: '#E8A0B0',
-                    transformOrigin: '50% 100%',
-                    transform: `rotate(${i * 60}deg)`
-                  }}
-                />
-              ))}
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  width: '8px',
-                  height: '8px',
-                  marginLeft: '-4px',
-                  marginTop: '-4px',
-                  borderRadius: '50%',
-                  background: '#FFD700'
-                }}
-              />
-            </div>
 
             {/* Text reveal area */}
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
-              {/* Decorative element */}
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '12px',
-                  left: '50%',
-                  transform: 'translateX(-50%)',
-                  opacity: 0.22,
-                  width: '60px',
-                  display: 'flex',
-                  gap: '4px',
-                  justifyContent: 'center'
-                }}
-              >
-                {['#FF9EBB', '#FFD700', '#CE93D8'].map((color, i) => (
-                  <div key={i} style={{ position: 'relative', width: '16px', height: '16px' }}>
-                    {Array.from({ length: 5 }).map((_, j) => (
-                      <div
-                        key={j}
-                        style={{
-                          position: 'absolute',
-                          top: '50%',
-                          left: '50%',
-                          width: '5px',
-                          height: '9px',
-                          marginLeft: '-2.5px',
-                          marginTop: '-8px',
-                          borderRadius: '50% 50% 40% 40%',
-                          background: color,
-                          transformOrigin: '50% 100%',
-                          transform: `rotate(${j * 72}deg)`
-                        }}
-                      />
-                    ))}
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: '50%',
-                        left: '50%',
-                        width: '5px',
-                        height: '5px',
-                        marginLeft: '-2.5px',
-                        marginTop: '-2.5px',
-                        borderRadius: '50%',
-                        background: '#FFD700'
-                      }}
-                    />
-                  </div>
-                ))}
-              </div>
-
               {/* Animated text reveal */}
               <div
                 style={{
                   opacity: isCardOpen ? 1 : 0,
-                  transition: isCardOpen ? 'opacity 0.4s ease 0.5s' : 'opacity 0.1s ease',
+                  transition: isCardOpen ? 'opacity 0.4s ease 1.4s' : 'opacity 0.1s ease',
                   position: 'absolute',
                   bottom: '22px',
                   left: 0,
@@ -691,119 +866,23 @@ function BirthdayCard() {
                     );
                   })}
                 </div>
-
-                {/* Decorative dots */}
-                <div
-                  style={{
-                    marginTop: '8px',
-                    display: 'flex',
-                    gap: '6px',
-                    opacity: textReveal[fullText.length - 1] ? 1 : 0,
-                    transform: textReveal[fullText.length - 1] ? 'scale(1)' : 'scale(0.4)',
-                    transition: 'opacity 0.5s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1)'
-                  }}
-                >
-                  {['#FF9EBB', '#FFD700', '#FF9EBB'].map((color, i) => (
-                    <div
-                      key={i}
-                      style={{
-                        width: '6px',
-                        height: '6px',
-                        borderRadius: '50%',
-                        background: color,
-                        boxShadow: `0 0 5px ${color}`
-                      }}
-                    />
-                  ))}
-                </div>
               </div>
             </div>
           </div>
 
-          {/* Card inside back panel */}
+          {/* Pop-up flowers container */}
           <div
             style={{
               position: 'absolute',
               width: CARD_WIDTH,
               height: CARD_HEIGHT,
-              transform: `translateZ(${-CARD_DEPTH / 2}px) rotateY(180deg)`,
-              background: 'linear-gradient(140deg, #FFB3C6 0%, #FF85A1 50%, #E8638F 100%)',
-              borderRadius: '10px 3px 3px 10px',
-              backfaceVisibility: 'hidden',
-              overflow: 'hidden',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
+              transform: `translateZ(${-CARD_DEPTH / 2 + 5}px)`,
+              pointerEvents: 'none',
+              overflow: 'visible'
             }}
           >
-            <div style={{ position: 'absolute', inset: '12px', border: '1px solid rgba(255,255,255,0.3)', borderRadius: '6px' }} />
-            {/* Message space */}
-            <div style={{ opacity: 0.4, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px' }}>
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div
-                  key={i}
-                  style={{
-                    position: 'absolute',
-                    top: '50%',
-                    left: '50%',
-                    width: '10px',
-                    height: '20px',
-                    marginLeft: '-5px',
-                    marginTop: '-18px',
-                    borderRadius: '50% 50% 40% 40%',
-                    background: 'rgba(255,255,255,0.6)',
-                    transformOrigin: '50% 100%',
-                    transform: `rotate(${i * 45}deg)`
-                  }}
-                />
-              ))}
-              <div
-                style={{
-                  position: 'absolute',
-                  top: '50%',
-                  left: '50%',
-                  width: '12px',
-                  height: '12px',
-                  marginLeft: '-6px',
-                  marginTop: '-6px',
-                  borderRadius: '50%',
-                  background: 'rgba(255,220,80,0.8)'
-                }}
-              />
-            </div>
-            <div
-              style={{
-                position: 'absolute',
-                bottom: '18px',
-                left: 0,
-                right: 0,
-                textAlign: 'center',
-                color: 'rgba(255,255,255,0.5)',
-                fontSize: '9px',
-                letterSpacing: '2px',
-                fontFamily: 'Georgia, serif',
-                fontStyle: 'italic'
-              }}
-            >
-              with love ♥
-            </div>
-          </div>
-
-          {/* Flowers inside card */}
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: CARD_WIDTH,
-              height: 0,
-              transformStyle: 'preserve-3d',
-              transform: `translateZ(${-CARD_DEPTH / 2 + 3}px)`,
-              pointerEvents: 'none'
-            }}
-          >
-            {FLOWERS.map((flower, i) => (
-              <Flower key={i} flower={flower} isOpen={isCardOpen} />
+            {FLOWERS.map((flower) => (
+              <Flower3D key={flower.id} flower={flower} isOpen={isCardOpen} />
             ))}
           </div>
 
@@ -839,19 +918,6 @@ function BirthdayCard() {
               {/* Border decorations */}
               <div style={{ position: 'absolute', inset: '14px', border: '1.5px solid rgba(255,255,255,0.45)', borderRadius: '5px', pointerEvents: 'none' }} />
               <div style={{ position: 'absolute', inset: '18px', border: '0.5px solid rgba(255,255,255,0.25)', borderRadius: '3px', pointerEvents: 'none' }} />
-
-              {/* Corner decorations */}
-              {[
-                { top: '20px', left: '20px' },
-                { top: '20px', right: '20px' },
-                { bottom: '20px', left: '20px' },
-                { bottom: '20px', right: '20px' }
-              ].map((position, i) => (
-                <div key={i} style={{ position: 'absolute', ...position, width: '16px', height: '16px', pointerEvents: 'none' }}>
-                  <div style={{ position: 'absolute', top: '50%', left: 0, right: 0, height: '1.5px', background: 'rgba(255,255,255,0.65)', marginTop: '-0.75px' }} />
-                  <div style={{ position: 'absolute', left: '50%', top: 0, bottom: 0, width: '1.5px', background: 'rgba(255,255,255,0.65)', marginLeft: '-0.75px' }} />
-                </div>
-              ))}
 
               {/* Front content */}
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%' }}>
@@ -903,13 +969,10 @@ function BirthdayCard() {
                 <div style={{ color: 'rgba(255,255,255,0.8)', fontFamily: 'system-ui, sans-serif', fontSize: '10px', letterSpacing: '2.5px', textTransform: 'uppercase' }}>
                   tap to open
                 </div>
-
-                {/* Bottom divider */}
-                <div style={{ position: 'absolute', bottom: '52px', left: '14px', right: '14px', height: '1.5px', background: 'linear-gradient(to right, transparent, rgba(212,175,55,0.7), transparent)' }} />
               </div>
             </div>
 
-            {/* Back side (when flipped) */}
+            {/* Back side (inside) */}
             <div
               style={{
                 position: 'absolute',
@@ -922,16 +985,15 @@ function BirthdayCard() {
                 overflow: 'hidden'
               }}
             >
-              {/* Decorative circle */}
+              {/* Interior shadows for pop-up effect */}
               <div
                 style={{
                   position: 'absolute',
-                  top: '-30px',
-                  right: '-30px',
-                  width: '180px',
-                  height: '180px',
-                  borderRadius: '50%',
-                  background: 'radial-gradient(circle, rgba(255,182,193,0.15) 0%, transparent 70%)',
+                  inset: 0,
+                  background: `
+                    radial-gradient(ellipse at 50% 0%, rgba(0,0,0,0.08) 0%, transparent 60%),
+                    radial-gradient(ellipse at 50% 100%, rgba(0,0,0,0.12) 0%, transparent 50%)
+                  `,
                   pointerEvents: 'none'
                 }}
               />
@@ -967,7 +1029,7 @@ function BirthdayCard() {
             </div>
           </div>
 
-          {/* Card edges */}
+          {/* Card edges with depth */}
           <div
             style={{
               position: 'absolute',
