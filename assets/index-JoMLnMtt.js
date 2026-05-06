@@ -11203,12 +11203,12 @@ function Kh() {
                                 O.jsx("div", {
                                 style: {
                                     fontSize: "12px",
-                                    lineHeight: "22px",
+                                    lineHeight: "16px",
                                     whiteSpace: "pre-line",
                                     opacity: 0.9
                                 },
                                 children:
-                                    "I hope your day feels calm and light.\n\nYou mean a lot more than you think.\n\n Im grateful for you.\n\nHappy Birthday"
+                                    "I hope the sun and ocean feel extra special today.\n\n Some places just fit certain people\n\nYoull have to tell me all about it.\n\n with much love - Manteca and Rigo"
                                 })
                             ]
                             }),
@@ -11219,14 +11219,14 @@ function Kh() {
                                 },
                                 style: {
                                     position: "absolute",
-                                    bottom: "24px",
+                                    bottom: "8px",
                                     right: "18px",
-                                    padding: "10px 18px",
+                                    padding: "8px 14px",
                                     borderRadius: "999px",
                                     border: "none",
                                     background: "#C8236B",
                                     color: "white",
-                                    fontSize: "12px",
+                                    fontSize: "11px",
                                     fontWeight: "700",
                                     cursor: "pointer",
                                     boxShadow: "0 10px 20px rgba(200,40,90,0.18)"
