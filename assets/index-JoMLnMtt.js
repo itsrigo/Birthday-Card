@@ -10435,49 +10435,32 @@ function Kh() {
     }, []),
     Al.useEffect(() => {
         let canceled = !1;
-        const folderUrl = "assets/photos/";
-        const parseImageLinks = html => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, "text/html");
-            return Array.from(doc.querySelectorAll("a"))
-                .map(link => link.getAttribute("href"))
-                .filter(Boolean)
-                .map(href => href.replace(/\\/g, "/"))
-                .filter(href => /\.(jpe?g|png|gif|webp)$/i.test(href))
-                .map(href => href.startsWith("http") || href.startsWith("/") ? href : folderUrl + href.replace(/^\.\//, ""));
-        };
         const loadImages = async () => {
             try {
-                const res = await fetch(folderUrl, { method: "GET" });
-                if (res.ok) {
-                    const contentType = res.headers.get("content-type") || "";
-                    const text = await res.text();
-                    let images = [];
-                    if (contentType.includes("text/html")) {
-                        images = parseImageLinks(text);
-                    } else if (/json/.test(contentType)) {
-                        const json = JSON.parse(text);
-                        if (Array.isArray(json)) {
-                            images = json.filter(name => /\.(jpe?g|png|gif|webp)$/i.test(name)).map(name => folderUrl + name);
+                const manifestRes = await fetch("assets/photos/manifest.json");
+                if (manifestRes.ok) {
+                    const manifest = await manifestRes.json();
+                    if (Array.isArray(manifest)) {
+                        const images = manifest
+                            .filter(name => /\.(jpe?g|png|gif|webp)$/i.test(name))
+                            .map(name => "assets/photos/" + name);
+                        if (!canceled && images.length) {
+                            setGalleryImages(images.map(src => ({
+                                src,
+                                name: src.split("/").pop()
+                            })));
                         }
                     }
-                    if (!images.length) {
-                        try {
-                            const manifestRes = await fetch(folderUrl + "photos.json");
-                            if (manifestRes.ok) {
-                                const manifest = await manifestRes.json();
-                                if (Array.isArray(manifest)) {
-                                    images = manifest.filter(name => /\.(jpe?g|png|gif|webp)$/i.test(name)).map(name => folderUrl + name);
-                                }
-                            }
-                        } catch (error) {
-                            // ignore manifest fetch errors
-                        }
-                    }
-                    if (!canceled && images.length) {
-                        setGalleryImages(Array.from(new Set(images)).map(src => ({
-                            src,
-                            name: src.split("/").pop()
+                }
+            } catch (error) {
+                // manifest.json not found - images will remain empty
+            }
+        };
+        loadImages();
+        return () => {
+            canceled = !0;
+        };
+    }, []),
                         })));
                     }
                 }
