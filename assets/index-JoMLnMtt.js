@@ -4258,13 +4258,13 @@ Error generating stack: `
                     var a = Bt,
                         u = Nt;
                     a = (u & ~(1 << 32 - Pl(u) - 1)).toString(32) + a,
-                    t = "Â«" + t + "R" + a,
+                    t = "«" + t + "R" + a,
                     a = $e++,
                     0 < a && (t += "H" + a.toString(32)),
-                    t += "Â»"
+                    t += "»"
                 } else
                     a = Td++,
-                    t = "Â«" + t + "r" + a.toString(32) + "Â»";
+                    t = "«" + t + "r" + a.toString(32) + "»";
                 return l.memoizedState = t
             },
             useHostTransitionStatus: $i,
@@ -10804,7 +10804,7 @@ function Kh() {
                                             transition: "transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease",
                                             textShadow: "0 1px 5px rgba(200,35,107,0.25)"
                                         },
-                                        children: E === " " ? "Â " : E
+                                        children: E === " " ? " " : E
                                     }, z)
                                 })
                             }), O.jsx("div", {
@@ -10899,7 +10899,7 @@ function Kh() {
                             fontFamily: "Georgia, serif",
                             fontStyle: "italic"
                         },
-                        children: "with love â™¥"
+                        children: "with love ♥"
                     })]
                 }), O.jsx("div", {
                     style: {
@@ -11135,7 +11135,7 @@ function Kh() {
                                     opacity: 0.9
                                 },
                                 children:
-                                    "I hope your day feels calm and light.\n\nYou mean a lot more than you think.\n\nIâ€™m grateful for you.\n\nHappy Birthday ðŸ’›"
+                                    "I hope your day feels calm and light.\n\nYou mean a lot more than you think.\n\n Im grateful for you.\n\nHappy Birthday"
                                 })
                             ]
                             }),
@@ -11149,7 +11149,7 @@ function Kh() {
                                 color: "rgba(210,100,130,0.28)",
                                 textAlign: "center"
                             },
-                            children: "â™¥"
+                            children: "♥"
                         })]
                     })]
                 }), O.jsx("div", {
@@ -11217,7 +11217,7 @@ function Kh() {
                     border: "1px solid rgba(255,255,255,0.7)",
                     boxShadow: "0 2px 20px rgba(180,90,60,0.1)"
                 },
-                children: "Click the card to open â€¢ Drag to rotate â€¢ Scroll to zoom"
+                children: "Click the card to open • Drag to rotate • Scroll to zoom"
             })
         })]
     })
