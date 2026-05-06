@@ -11305,6 +11305,8 @@ function Kh() {
                 children: [O.jsx("button", {
                     onClick: closeGallery,
                     style: {
+                        position: "sticky",
+                        top: "20px",
                         marginBottom: "18px",
                         padding: "12px 20px",
                         borderRadius: "999px",
@@ -11313,7 +11315,8 @@ function Kh() {
                         color: "white",
                         fontSize: "14px",
                         fontWeight: "700",
-                        cursor: "pointer"
+                        cursor: "pointer",
+                        zIndex: 10
                     },
                     children: "Back to card"
                 }), O.jsxs("div", {
