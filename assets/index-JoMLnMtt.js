@@ -10516,7 +10516,8 @@ function Kh() {
         className: "w-full h-screen relative overflow-hidden",
         style: {
             background: "linear-gradient(155deg, #FFF8F5 0%, #FFE8D8 55%, #FFF5EC 100%)",
-            userSelect: "none"
+            userSelect: "none",
+            touchAction: "none"
         },
         onMouseDown: mt,
         onTouchStart: Ol,
