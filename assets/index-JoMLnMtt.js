@@ -11057,7 +11057,7 @@ function Kh() {
                                     textShadow: "0 2px 8px rgba(140,0,50,0.3)",
                                     marginBottom: "6px"
                                 },
-                                children: "For You"
+                                children: "For Cosita <3"
                             }), O.jsx("div", {
                                 style: {
                                     width: "70px",
