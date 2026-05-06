@@ -10407,6 +10407,8 @@ function Kh() {
         [W, sl] = Al.useState(1),
         [U, T] = Al.useState([]),
         [N, P] = Al.useState(!1),
+        [showGallery, setShowGallery] = Al.useState(!1),
+        [galleryImages, setGalleryImages] = Al.useState([]),
         [al, Hl] = Al.useState(0),
         ml = Al.useRef(!1),
         Zl = Al.useRef(!1),
@@ -10417,6 +10419,7 @@ function Kh() {
         gt = Al.useRef(0),
         $l = Al.useRef(null),
         pinchRef = Al.useRef({ distance: 0, scale: 1 }),
+        audioRef = Al.useRef(null),
         zl = Al.useMemo(() => Lh(70), []),
         Nl = "Happy",
         V = "Birthday!",
@@ -10431,6 +10434,63 @@ function Kh() {
         return gt.current = requestAnimationFrame(E), () => cancelAnimationFrame(gt.current)
     }, []),
     Al.useEffect(() => {
+        let canceled = !1;
+        const folderUrl = "assets/photos/";
+        const parseImageLinks = html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, "text/html");
+            return Array.from(doc.querySelectorAll("a"))
+                .map(link => link.getAttribute("href"))
+                .filter(Boolean)
+                .map(href => href.replace(/\\/g, "/"))
+                .filter(href => /\.(jpe?g|png|gif|webp)$/i.test(href))
+                .map(href => href.startsWith("http") || href.startsWith("/") ? href : folderUrl + href.replace(/^\.\//, ""));
+        };
+        const loadImages = async () => {
+            try {
+                const res = await fetch(folderUrl, { method: "GET" });
+                if (res.ok) {
+                    const contentType = res.headers.get("content-type") || "";
+                    const text = await res.text();
+                    let images = [];
+                    if (contentType.includes("text/html")) {
+                        images = parseImageLinks(text);
+                    } else if (/json/.test(contentType)) {
+                        const json = JSON.parse(text);
+                        if (Array.isArray(json)) {
+                            images = json.filter(name => /\.(jpe?g|png|gif|webp)$/i.test(name)).map(name => folderUrl + name);
+                        }
+                    }
+                    if (!images.length) {
+                        try {
+                            const manifestRes = await fetch(folderUrl + "photos.json");
+                            if (manifestRes.ok) {
+                                const manifest = await manifestRes.json();
+                                if (Array.isArray(manifest)) {
+                                    images = manifest.filter(name => /\.(jpe?g|png|gif|webp)$/i.test(name)).map(name => folderUrl + name);
+                                }
+                            }
+                        } catch (error) {
+                            // ignore manifest fetch errors
+                        }
+                    }
+                    if (!canceled && images.length) {
+                        setGalleryImages(Array.from(new Set(images)).map(src => ({
+                            src,
+                            name: src.split("/").pop()
+                        })));
+                    }
+                }
+            } catch (error) {
+                // ignore failures
+            }
+        };
+        loadImages();
+        return () => {
+            canceled = !0;
+        };
+    }, []),
+    Al.useEffect(() => {
         A ? (T(Array(xl.length).fill(!1)), P(!1), xl.split("").forEach((E, z) => {
             setTimeout(() => {
                 T(s => {
@@ -10439,6 +10499,14 @@ function Kh() {
                 })
             }, 650 + z * 80)
         }), setTimeout(() => P(!0), 650 + xl.length * 80 + 300)) : (T([]), P(!1))
+    }, [A]);
+    Al.useEffect(() => {
+        if (A && audioRef.current) {
+            audioRef.current.play().catch(() => {});
+        } else if (!A && audioRef.current) {
+            audioRef.current.pause();
+            audioRef.current.currentTime = 0;
+        }
     }, [A]);
     const jl = Al.useCallback((E, z) => {
             ml.current = !0,
@@ -10465,7 +10533,9 @@ function Kh() {
         }, []),
         xt = Al.useCallback(() => {
             ml.current = !1
-        }, []);
+        }, []),
+        openGallery = () => setShowGallery(!0),
+        closeGallery = () => setShowGallery(!1);
     Al.useEffect(() => {
         const E = s => Ll(s.clientX, s.clientY),
             z = () => xt();
@@ -11142,6 +11212,27 @@ function Kh() {
                                 })
                             ]
                             }),
+                            O.jsx("button", {
+                                onClick: E => {
+                                    E.stopPropagation(),
+                                    openGallery()
+                                },
+                                style: {
+                                    position: "absolute",
+                                    bottom: "24px",
+                                    right: "18px",
+                                    padding: "10px 18px",
+                                    borderRadius: "999px",
+                                    border: "none",
+                                    background: "#C8236B",
+                                    color: "white",
+                                    fontSize: "12px",
+                                    fontWeight: "700",
+                                    cursor: "pointer",
+                                    boxShadow: "0 10px 20px rgba(200,40,90,0.18)"
+                                },
+                                children: "Click me"
+                            }),
                              O.jsx("div", {
                             style: {
                                 position: "absolute",
@@ -11222,6 +11313,89 @@ function Kh() {
                 },
                 children: "Click the card to open • Drag to rotate • Scroll to zoom"
             })
+        }), showGallery && O.jsx("div", {
+            style: {
+                position: "absolute",
+                inset: 0,
+                zIndex: 50,
+                background: "rgba(255,255,255,0.98)",
+                backdropFilter: "blur(12px)",
+                display: "flex",
+                flexDirection: "column",
+                padding: "20px",
+                overflow: "auto"
+            },
+            children: O.jsxs("div", {
+                style: {
+                    maxWidth: "1000px",
+                    width: "100%",
+                    margin: "0 auto"
+                },
+                children: [O.jsx("button", {
+                    onClick: closeGallery,
+                    style: {
+                        marginBottom: "18px",
+                        padding: "12px 20px",
+                        borderRadius: "999px",
+                        border: "none",
+                        background: "#C8236B",
+                        color: "white",
+                        fontSize: "14px",
+                        fontWeight: "700",
+                        cursor: "pointer"
+                    },
+                    children: "Back to card"
+                }), O.jsxs("div", {
+                    style: {
+                        marginBottom: "18px",
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "16px",
+                        flexWrap: "wrap"
+                    },
+                    children: []
+                }), O.jsx("div", {
+                    style: {
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))",
+                        gap: "18px",
+                        alignItems: "stretch"
+                    },
+                    children: galleryImages.length ? galleryImages.map((E, z) => O.jsx("div", {
+                        style: {
+                            borderRadius: "22px",
+                            overflow: "hidden",
+                            background: "#f7f1f6",
+                            boxShadow: "0 18px 35px rgba(0,0,0,0.12)",
+                            minHeight: "180px"
+                        },
+                        children: O.jsx("img", {
+                            src: E.src,
+                            alt: E.name,
+                            style: {
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                                display: "block"
+                            }
+                        })
+                    }, z)) : O.jsx("div", {
+                        style: {
+                            padding: "40px 20px",
+                            borderRadius: "20px",
+                            textAlign: "center",
+                            color: "#7A4A63",
+                            background: "rgba(232,209,226,0.35)",
+                            fontSize: "16px"
+                        },
+                        children: "No asset images were found. Add files to /assets and update the assetGalleryImagePaths array in code."
+                    })
+                })]
+            })
+        }), O.jsx("audio", {
+            ref: audioRef,
+            src: "assets/audio.mp3",
+            preload: "auto"
         })]
     })
 }
