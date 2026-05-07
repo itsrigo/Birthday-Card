@@ -11179,7 +11179,7 @@ function Kh() {
                                     opacity: 0.9
                                 },
                                 children:
-                                    "I hope the sun and ocean feel extra special today.\n\n Some places just fit certain people\n\nYoull have to tell me all about it.\n\n with much love - Manteca and Rigo"
+                                    "I hope the sun and ocean feel extra special today.\n\n Some places just fit certain people\n\nYoull have to tell me all about it.\n\n Con Mucho Amor - Manteca and Rigo"
                                 })
                             ]
                             }),
